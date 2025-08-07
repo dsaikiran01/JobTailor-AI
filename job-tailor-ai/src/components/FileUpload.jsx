@@ -18,10 +18,9 @@ export default function FileUpload({ onExtracted }) {
 
     try {
       const text = await extractTextFromPDF(file);
-      onExtracted(text); // send extracted resume text to parent
+      onExtracted(text);
     } catch (err) {
       setError("Failed to parse PDF.");
-      console.error(err);
     }
   };
 
