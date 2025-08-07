@@ -1,60 +1,83 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import FileUpload from "../components/FileUpload";
 import { generateGeminiResponse } from "../utils/geminiApi";
 import Loader from "../components/Loader";
-import { useRef } from "react";
 import html2pdf from "html2pdf.js";
+import CoverLetterEditor from "../components/CoverLetterEditor";
+import { convertFromRaw, convertToRaw, ContentState } from "draft-js";
 
 export default function Home() {
     const [resumeText, setResumeText] = useState("");
     const [jobDesc, setJobDesc] = useState("");
-    const [output, setOutput] = useState("");
+    const [editorContent, setEditorContent] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const pdfRef = useRef();
 
-
-    const handleDownloadPDF = () => {
-        const element = pdfRef.current;
-
-        const options = {
-            margin: 0.5,
-            filename: 'cover-letter.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-        };
-
-        html2pdf().set(options).from(element).save();
+    // Convert plain text to Draft.js raw content
+    const textToRawDraft = (text) => {
+        const contentState = ContentState.createFromText(text);
+        return JSON.stringify(convertToRaw(contentState));
     };
 
+    // Convert Draft raw to HTML string (basic formatting)
+    const draftRawToHTML = (raw) => {
+        if (!raw) return "";
+        const contentState = convertFromRaw(JSON.parse(raw));
+        const blocks = contentState.getBlocksAsArray();
+
+        return blocks.map(block => `<p>${block.getText()}</p>`).join("");
+    };
+
+
     const handleGenerate = async () => {
-        console.log("resume text: ", resumeText);
-        console.log("job desc: ", jobDesc);
-        
         if (!resumeText || !jobDesc) {
             alert("Please upload a resume and paste the job description.");
             return;
         }
 
         const prompt = `
-            You are a professional career advisor. Based on the resume and job description below, generate a tailored cover letter.
+      You are a professional career advisor. Based on the resume and job description below, generate a tailored cover letter.
 
-            ---
+      Resume:
+      ${resumeText}
 
-            Resume:
-            ${resumeText}
-
-            ---
-
-            Job Description:
-            ${jobDesc}
-        `;
+      Job Description:
+      ${jobDesc}
+    `;
 
         setLoading(true);
-        const result = await generateGeminiResponse(prompt);
-        setOutput(result);
-        setLoading(false);
+        try {
+            const response = await generateGeminiResponse(prompt);
+            const rawContent = textToRawDraft(response);
+            setEditorContent(rawContent);
+        } catch (err) {
+            alert("Something went wrong while generating the cover letter.");
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDownloadPDF = () => {
+        const html = draftRawToHTML(editorContent);
+
+        console.log("html: ", html)
+
+        const element = document.createElement("div");
+        element.style.padding = "20px";
+        element.innerHTML = html;
+
+        html2pdf()
+            .from(element)
+            .set({
+                margin: 0.5,
+                filename: "cover-letter.pdf",
+                image: { type: "jpeg", quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+            })
+            .save();
     };
 
     return (
@@ -77,33 +100,22 @@ export default function Home() {
             </div>
 
             <button onClick={handleGenerate} disabled={loading} style={{ marginTop: "1rem" }}>
-                {/* {loading ? "Generating..." : "Generate Cover Letter"} */}
-                {loading && <Loader />}
+                {loading ? <Loader /> : "Generate Cover Letter"}
             </button>
 
-            {output && (
+            {!loading && editorContent && (
                 <>
-                    <div
-                        ref={pdfRef}
-                        style={{
-                            marginTop: "2rem",
-                            whiteSpace: "pre-wrap",
-                            border: "1px solid #ddd",
-                            padding: "1rem",
-                            backgroundColor: "#fff",
-                            color: "#000",
-                        }}
-                    >
-                        <h2>Generated Cover Letter:</h2>
-                        <p>{output}</p>
+                    <div ref={pdfRef} style={{ marginTop: "2rem", backgroundColor: "#fff", color: "#000", }}>
+                        <h2>Editable Cover Letter:</h2>
+                        <CoverLetterEditor value={editorContent} onChange={setEditorContent} />
                     </div>
+                     
 
                     <button onClick={handleDownloadPDF} style={{ marginTop: "1rem" }}>
                         Download as PDF
                     </button>
                 </>
             )}
-
         </div>
     );
 }

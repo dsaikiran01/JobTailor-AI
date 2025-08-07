@@ -10,4 +10,7 @@ export default defineConfig({
       'pdfjs-dist/build/pdf.worker.entry': 'pdfjs-dist/legacy/build/pdf.worker.entry.js',
     },
   },
+  define: {
+    global: "window",
+  },
 })
