@@ -16,8 +16,13 @@ JobTailor AI is a modern AI-powered web application designed to help job seekers
 - Generate a customized cover letter using Gemini 1.5 Flash Free API.
 - Prompt crafted for professional tone and resume-job alignment.
 
+### ✅ Live Preview + Rich Text Editing
+- Editable WYSIWYG interface built using `draft-js`.
+- Users can tweak AI output before exporting.
+
 ### ✅ Download as PDF
-- Convert and download the AI-generated cover letter as a `.pdf` using `html2pdf.js`.
+- Clean, styled PDF export using [`@react-pdf/renderer`](https://react-pdf.org/).
+- Ensures layout is preserved even without a backend.
 
 ### ✅ Loading Spinner
 - Clean, non-blocking loading spinner while Gemini is processing.
@@ -29,7 +34,8 @@ JobTailor AI is a modern AI-powered web application designed to help job seekers
 - **Frontend:** React + Vite
 - **AI API:** Google Gemini 1.5 Flash (via free API key)
 - **PDF Parsing:** [`react-pdftotext`](https://www.npmjs.com/package/react-pdftotext)
-- **PDF Download:** `html2pdf.js`
+- **PDF Download:** [`@react-pdf/renderer`](https://react-pdf.org/)
+- **Text Editor:** [`draft-js`](https://draftjs.org/)
 - **Styling:** Basic inline styles (can be replaced with Tailwind or CSS Modules)
 
 ---
@@ -39,13 +45,15 @@ JobTailor AI is a modern AI-powered web application designed to help job seekers
 ```
 src/
 ├── components/
-│   ├── FileUpload.jsx      // Resume upload + parsing
-│   ├── Loader.jsx          // Spinner component
+│   ├── FileUpload.jsx        // Resume upload + parsing
+│   ├── Loader.jsx            // Spinner component
+│   ├── CoverLetterEditor.jsx // Editable WYSIWYG component
+│   └── CoverLetterPDF.jsx    // PDF layout using react-pdf
 ├── pages/
-│   └── Home.jsx            // Main UI logic
+│   └── Home.jsx              // Main UI logic
 ├── utils/
-│   ├── geminiApi.js        // API call to Gemini
-│   └── pdfParser.js        // PDF parsing using react-pdftotext
+│   ├── geminiApi.js          // API call to Gemini
+│   └── pdfParser.js          // PDF parsing using react-pdftotext
 ```
 
 ---
@@ -93,7 +101,8 @@ src/
 
 - [Google Gemini API](https://ai.google.dev/)
 - [react-pdftotext](https://www.npmjs.com/package/react-pdftotext)
-- [html2pdf.js](https://www.npmjs.com/package/html2pdf.js)
+- [@react-pdf/renderer](https://react-pdf.org/)
+- [draft-js](https://draftjs.org/)
 
 ---
 
