@@ -4,13 +4,14 @@ import { generateGeminiResponse } from "../utils/geminiApi";
 import Loader from "../components/Loader";
 import html2pdf from "html2pdf.js";
 import CoverLetterEditor from "../components/CoverLetterEditor";
-import { convertFromRaw, convertToRaw, ContentState } from "draft-js";
+import { EditorState, convertToRaw, convertFromRaw, ContentState } from "draft-js";
 
 export default function Home() {
     const [resumeText, setResumeText] = useState("");
     const [jobDesc, setJobDesc] = useState("");
-    const [editorContent, setEditorContent] = useState(null);
+    const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
     const [loading, setLoading] = useState(false);
+    const [hasGenerated, setHasGenerated] = useState(false);
 
     const pdfRef = useRef();
 
@@ -48,9 +49,11 @@ export default function Home() {
 
         setLoading(true);
         try {
-            const response = await generateGeminiResponse(prompt);
-            const rawContent = textToRawDraft(response);
-            setEditorContent(rawContent);
+            const res = await generateGeminiResponse(prompt);
+            const contentState = ContentState.createFromText(res);
+            const newEditorState = EditorState.createWithContent(contentState);
+            setEditorState(newEditorState);
+            setHasGenerated(true);
         } catch (err) {
             alert("Something went wrong while generating the cover letter.");
             console.error(err);
@@ -60,9 +63,9 @@ export default function Home() {
     };
 
     const handleDownloadPDF = () => {
-        const html = draftRawToHTML(editorContent);
-
-        console.log("html: ", html)
+        const contentState = editorState.getCurrentContent();
+        const blocks = contentState.getBlocksAsArray();
+        const html = blocks.map(block => `<p>${block.getText()}</p>`).join("");
 
         const element = document.createElement("div");
         element.style.padding = "20px";
@@ -79,6 +82,7 @@ export default function Home() {
             })
             .save();
     };
+
 
     return (
         <div style={{ padding: "2rem", maxWidth: "800px", margin: "auto" }}>
@@ -103,13 +107,12 @@ export default function Home() {
                 {loading ? <Loader /> : "Generate Cover Letter"}
             </button>
 
-            {!loading && editorContent && (
+            {!loading && hasGenerated && (
                 <>
                     <div ref={pdfRef} style={{ marginTop: "2rem", backgroundColor: "#fff", color: "#000", }}>
                         <h2>Editable Cover Letter:</h2>
-                        <CoverLetterEditor value={editorContent} onChange={setEditorContent} />
-                    </div>
-                     
+                        <CoverLetterEditor editorState={editorState} onChange={setEditorState} />                    </div>
+
 
                     <button onClick={handleDownloadPDF} style={{ marginTop: "1rem" }}>
                         Download as PDF
