@@ -5,6 +5,10 @@ import Loader from "../components/Loader";
 import html2pdf from "html2pdf.js";
 import CoverLetterEditor from "../components/CoverLetterEditor";
 import { EditorState, convertToRaw, convertFromRaw, ContentState } from "draft-js";
+import { stateToHTML } from "draft-js-export-html";
+import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
+import CoverLetterPDF from "../components/CoverLetterPDF";
+import { saveAs } from "file-saver";
 
 export default function Home() {
     const [resumeText, setResumeText] = useState("");
@@ -62,25 +66,36 @@ export default function Home() {
         }
     };
 
-    const handleDownloadPDF = () => {
-        const contentState = editorState.getCurrentContent();
-        const blocks = contentState.getBlocksAsArray();
-        const html = blocks.map(block => `<p>${block.getText()}</p>`).join("");
+    // const handleDownloadPDF = () => {
+    //     const contentState = editorState.getCurrentContent();
+    //     const html = stateToHTML(contentState);
+    //     const element = document.createElement("div");
+    //     element.innerHTML = html;
+    //     element.style.padding = "20px";
+    //     element.style.fontFamily = "serif";
+    //     element.style.fontSize = "14px";
 
-        const element = document.createElement("div");
-        element.style.padding = "20px";
-        element.innerHTML = html;
+    //     const options = {
+    //         margin: 0.5,
+    //         filename: "cover-letter.pdf",
+    //         image: { type: "jpeg", quality: 0.98 },
+    //         html2canvas: {
+    //             scale: 2,
+    //             scrollX: 0,
+    //             scrollY: 0
+    //         },
+    //         jsPDF: { unit: "in", format: "letter", orientation: "portrait" }
+    //     };
 
-        html2pdf()
-            .from(element)
-            .set({
-                margin: 0.5,
-                filename: "cover-letter.pdf",
-                image: { type: "jpeg", quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
-            })
-            .save();
+    //     setTimeout(() => {
+    //         html2pdf().from(element).set(options).save();
+    //     }, 300); // allow rendering
+    // };
+
+    const handleDownloadPDF = async () => {
+        const content = editorState.getCurrentContent().getPlainText();
+        const blob = await pdf(<CoverLetterPDF content={content} />).toBlob();
+        saveAs(blob, "cover-letter.pdf");
     };
 
 
