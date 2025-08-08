@@ -24,14 +24,14 @@ export default function Home() {
         }
 
         const prompt = `
-      You are a professional career advisor. Based on the resume and job description below, generate a tailored cover letter.
+            You are a professional career advisor. Based on the resume and job description below, generate a tailored cover letter.
 
-      Resume:
-      ${resumeText}
+            Resume:
+            ${resumeText}
 
-      Job Description:
-      ${jobDesc}
-    `;
+            Job Description:
+            ${jobDesc}
+        `;
 
         setLoading(true);
         try {
