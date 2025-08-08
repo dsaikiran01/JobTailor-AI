@@ -20,9 +20,12 @@ JobTailor AI is a modern AI-powered web application designed to help job seekers
 - Editable WYSIWYG interface built using `draft-js`.
 - Users can tweak AI output before exporting.
 
-### ✅ Download as PDF
+### ✅ Improved Cover Letter PDF Export
 - Clean, styled PDF export using [`@react-pdf/renderer`](https://react-pdf.org/).
-- Ensures layout is preserved even without a backend.
+- Custom paragraph splitting logic to respect blank lines for proper paragraph separation.
+- Paragraphs rendered as separate `<Text>` components with margin spacing for clear line separation.
+- Added a visible border around the PDF page content acting as a margin frame (using `borderWidth` and `borderColor`).
+- Ensured PDF download feature is stable and consistent without layout breaking.
 
 ### ✅ Loading Spinner
 - Clean, non-blocking loading spinner while Gemini is processing.
@@ -48,7 +51,7 @@ src/
 │   ├── FileUpload.jsx        // Resume upload + parsing
 │   ├── Loader.jsx            // Spinner component
 │   ├── CoverLetterEditor.jsx // Editable WYSIWYG component
-│   └── CoverLetterPDF.jsx    // PDF layout using react-pdf
+│   └── CoverLetterPDF.jsx    // PDF layout using react-pdf with paragraph splitting and border styles
 ├── pages/
 │   └── Home.jsx              // Main UI logic
 ├── utils/
@@ -99,10 +102,10 @@ src/
 
 ## ✨ Credits
 
-- [Google Gemini API](https://ai.google.dev/)
-- [react-pdftotext](https://www.npmjs.com/package/react-pdftotext)
-- [@react-pdf/renderer](https://react-pdf.org/)
-- [draft-js](https://draftjs.org/)
+* [Google Gemini API](https://ai.google.dev/)
+* [react-pdftotext](https://www.npmjs.com/package/react-pdftotext)
+* [@react-pdf/renderer](https://react-pdf.org/)
+* [draft-js](https://draftjs.org/)
 
 ---
 

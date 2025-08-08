@@ -7,6 +7,7 @@ import { EditorState, ContentState } from "draft-js";
 import { pdf } from "@react-pdf/renderer";
 import CoverLetterPDF from "../components/CoverLetterPDF";
 import { saveAs } from "file-saver";
+import Navbar from "../components/Navbar";
 
 export default function Home() {
     const [resumeText, setResumeText] = useState("");
@@ -54,42 +55,57 @@ export default function Home() {
         saveAs(blob, "cover-letter.pdf");
     };
 
-
     return (
-        <div style={{ padding: "2rem", maxWidth: "800px", margin: "auto" }}>
-            <h1>Smart Job Application Assistant</h1>
+        <div className="min-h-screen w-screen flex items-center justify-center bg-gray-50 overflow-y-scroll">
+            <Navbar />
+            <div className="w-full max-w-3xl mt-16 p-8 text-center">
+                <h1 className="text-3xl  font-bold mb-6 dark:text-black">Smart Job Application Assistant</h1>
 
-            <FileUpload onExtracted={setResumeText} />
+                <FileUpload onExtracted={setResumeText} />
 
-            <div style={{ marginTop: "2rem" }}>
-                <label>
-                    Paste Job Description:
-                    <textarea
-                        rows="10"
-                        style={{ width: "100%" }}
-                        value={jobDesc}
-                        onChange={(e) => setJobDesc(e.target.value)}
-                        placeholder="Paste the job description here"
-                    />
-                </label>
+                <div className="mt-8">
+                    <label className="block mb-2 font-medium">
+                        Paste Job Description:
+                        <textarea
+                            rows="10"
+                            className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            value={jobDesc}
+                            onChange={(e) => setJobDesc(e.target.value)}
+                            placeholder="Paste the job description here"
+                        />
+                    </label>
+                </div>
+
+                <button
+                    onClick={handleGenerate}
+                    disabled={loading}
+                    className="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {loading ? <Loader /> : "Generate Cover Letter"}
+                </button>
+
+                {!loading && hasGenerated && (
+                    <>
+                        <div
+                            ref={pdfRef}
+                            className="mt-8 p-6 bg-white text-black shadow-md rounded"
+                        >
+                            <h2 className="text-xl font-semibold mb-4">Editable Cover Letter:</h2>
+                            <CoverLetterEditor
+                                editorState={editorState}
+                                onChange={setEditorState}
+                            />
+                        </div>
+
+                        <button
+                            onClick={handleDownloadPDF}
+                            className="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                        >
+                            Download as PDF
+                        </button>
+                    </>
+                )}
             </div>
-
-            <button onClick={handleGenerate} disabled={loading} style={{ marginTop: "1rem" }}>
-                {loading ? <Loader /> : "Generate Cover Letter"}
-            </button>
-
-            {!loading && hasGenerated && (
-                <>
-                    <div ref={pdfRef} style={{ marginTop: "2rem", backgroundColor: "#fff", color: "#000", }}>
-                        <h2>Editable Cover Letter:</h2>
-                        <CoverLetterEditor editorState={editorState} onChange={setEditorState} />                    </div>
-
-
-                    <button onClick={handleDownloadPDF} style={{ marginTop: "1rem" }}>
-                        Download as PDF
-                    </button>
-                </>
-            )}
         </div>
     );
 }
