@@ -60,7 +60,7 @@ function parseCoverLetter(content) {
     const line = lines[i];
 
     // Detect date line (e.g., August 8, 2025)
-    if (!dateLine && /^\w+ \d{1,2}, \d{4}$/.test(line)) {
+    if (!dateLine && ( /^\d{1,2}\w{2} \w+ \d{4}$/.test(line) || /^\w+ \d{1,2}, \d{4}$/.test(line) )) {
       dateLine = line;
       state = "to";
       continue;

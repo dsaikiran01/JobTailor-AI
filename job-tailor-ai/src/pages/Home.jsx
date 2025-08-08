@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import FileUpload from "../components/FileUpload";
 import { generateGeminiResponse } from "../utils/geminiApi";
 import Loader from "../components/Loader";
 import CoverLetterEditor from "../components/CoverLetterEditor";
-import { EditorState, convertToRaw, convertFromRaw, ContentState } from "draft-js";
-import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
+import { EditorState, ContentState } from "draft-js";
+import { pdf } from "@react-pdf/renderer";
 import CoverLetterPDF from "../components/CoverLetterPDF";
 import { saveAs } from "file-saver";
 
