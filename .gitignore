@@ -24,6 +24,7 @@ dist-ssr
 *.sw?
 
 test-backend/
+prompts/
 
 .env
 Steps.md
