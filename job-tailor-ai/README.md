@@ -89,14 +89,32 @@ src/
    ```bash
    npm install
    ```
-3. Set your Gemini API Key in `.env`:
-   ```env
-   VITE_GEMINI_API_KEY=your_google_api_key
-   ```
-4. Start the dev server:
+3. Start the dev server:
    ```bash
    npm run dev
    ```
+
+---
+
+
+## 🔐 API Key Required
+
+This app requires a **Google Gemini API key** to work.
+
+#### ➤ Get your API key here:
+
+👉 [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
+
+#### ➤ How to use the API key:
+
+1. Run the app with `npm run dev` or visit the deployed version.
+2. On the main page, below the job description input:
+
+   * You'll see a field labeled **"Gemini API Key"**.
+   * Paste your API key into that field.
+3. The app will use this key to securely call the Gemini API when generating your cover letter.
+
+> 💡 Your API key is **never stored** on the server and stays on your device only (in memory, not even in localStorage).
 
 ---
 

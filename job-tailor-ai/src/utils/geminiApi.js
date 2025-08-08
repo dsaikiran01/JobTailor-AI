@@ -1,8 +1,14 @@
 import axios from "axios";
 
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`;
+export const generateGeminiResponse = async (prompt, apiKey) => {
+  // Debug: in Development mode
+  if (import.meta.env.DEV) {
+    console.log("apikey: " + apiKey);
+    console.log("type:", typeof apiKey);
+  }
 
-export const generateGeminiResponse = async (prompt) => {
+  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
   try {
     const response = await axios.post(GEMINI_URL, {
       contents: [{ parts: [{ text: prompt }] }],

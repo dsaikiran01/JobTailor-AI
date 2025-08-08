@@ -15,13 +15,35 @@ export default function Home() {
     const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
     const [loading, setLoading] = useState(false);
     const [hasGenerated, setHasGenerated] = useState(false);
+    const [apiKey, setApiKey] = useState('');
 
     const pdfRef = useRef();
 
     const handleGenerate = async () => {
-        if (!resumeText || !jobDesc) {
+        if (!resumeText && !jobDesc) {
             alert("Please upload a resume and paste the job description.");
             return;
+        }
+
+        if (!resumeText) {
+            alert("Please upload a resume");
+            return;
+        }
+
+        if (!jobDesc) {
+            alert("Please paste the job description.");
+            return;
+        }
+
+        if (!apiKey) {
+            alert("Please enter your Gemini API key.");
+            return;
+        }
+
+        // Debug: in Development mode
+        if (import.meta.env.DEV) {
+            console.log("resume: " + resumeText);
+            console.log("job desc: " + jobDesc);
         }
 
         const prompt = `
@@ -36,7 +58,7 @@ export default function Home() {
 
         setLoading(true);
         try {
-            const res = await generateGeminiResponse(prompt);
+            const res = await generateGeminiResponse(prompt, apiKey);
             const contentState = ContentState.createFromText(res);
             const newEditorState = EditorState.createWithContent(contentState);
             setEditorState(newEditorState);
@@ -74,6 +96,32 @@ export default function Home() {
                             placeholder="Paste the job description here"
                         />
                     </label>
+                </div>
+
+                {/* API Key input */}
+                <div className="mt-6">
+                    <label className="block mb-2 font-medium text-gray-700">
+                        Gemini API Key:
+                        <input
+                            type="password"
+                            className="w-full mt-2 p-3 border border-gray-300 rounded-md dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            value={apiKey}
+                            onChange={(e) => setApiKey(e.target.value)}
+                            placeholder="Enter your Gemini API key"
+                        />
+                    </label>
+                    <p className="text-sm text-gray-500 mt-1">
+                        Get your Gemini API key from{' '}
+                        <a
+                            href="https://aistudio.google.com/app/apikey"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline"
+                        >
+                            aistudio.google.com/app/apikey
+                        </a>
+                        . It's free &#128519;
+                    </p>
                 </div>
 
                 <button
