@@ -24,19 +24,10 @@ export default function Home() {
             return;
         }
 
-        const prompt = `
-            You are a professional career advisor. Based on the resume and job description below, generate a tailored cover letter.
-
-            Resume:
-            ${resumeText}
-
-            Job Description:
-            ${jobDesc}
-        `;
-
         setLoading(true);
+        
         try {
-            const res = await generateGeminiResponse(prompt);
+            const res = await generateGeminiResponse(resumeText, jobDesc);
             const contentState = ContentState.createFromText(res);
             const newEditorState = EditorState.createWithContent(contentState);
             setEditorState(newEditorState);
