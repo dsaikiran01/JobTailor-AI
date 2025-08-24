@@ -118,10 +118,11 @@ export default function Home() {
                             rel="noopener noreferrer"
                             className="text-blue-600 hover:underline"
                         >
-                            aistudio.google.com/app/apikey
+                            here
                         </a>
                         . It's free &#128519;
                     </p>
+                    <p className="text-sm text-gray-500 mt-1">We don't store your data or API Key.</p>
                 </div>
 
                 <button
